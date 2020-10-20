@@ -1,0 +1,374 @@
+\documentclass[12pt]{article}
+
+\input{../../../sablony/makra/makra}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amsmath,stackengine}
+\usepackage{amsthm}
+\stackMath
+
+
+\newtheorem{theorem}{Věta}[section]
+\newtheorem{corollary}{Důsledek}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{defn}[theorem]{Definice} 
+\newtheorem{expl}[theorem]{Příklad}
+\begin{document}
+
+\title{Úplná Gaussova eliminace}
+\author{Štěpán Tichý}
+\date{\today}
+
+\maketitle
+
+\section{Analogie pro sloupce}
+\begin{defn}
+\label{defn1}
+V případě,že neuvažujeme matice jako soustavy LAR, můžeme zadefinovat obdobu ekvivalentních řádkových úprav a to pro sloupce. Ekvivalentní sloupcové úpravy jsou pak téže tři:
+\begin{enumerate}
+\item záměna dvou sloupců,
+\item přičtení násobku jiného sloupce k vybranému sloupci,
+\item násobení sloupce číslem $\alpha \neq 0$.
+\end{enumerate}
+\end{defn}
+\thispagestyle{empty}
+\begin{lemma}
+\label{lma1}
+
+Nechť $\mathbb{A} \in T^{n,m}$. Jestliže provedeme ekvivalentní sloupcovou úpravu, je výsledná matice rovna matici $\mathbb{AM}$, kde $\mathbb{M}$ je čtvercová matice řádu \textbf{m}, která vznikla z jednotkové matice $\mathbb{I}$ stejnou sloupcovou úpravou.\\
+\end{lemma}
+\textit{Důkaz}. Je třeba ověřit, že tvrzení je pravdivé pro všechny ekvivalentní sloupcové úpravy:
+\\
+\\
+1. Záměna \textit{i}-tého a \textit{j}-tého sloupce.
+\\
+\\
+\begin{footnotesize}
+$$
+\begin{pmatrix}
+ a_{11} & \dots & a_{1i} & \dots & a_{1j} & \dots & a_{1m} \\
+ a_{21} & \dots & a_{2i} & \dots & a_{2j} & \dots & a_{2m} \\
+ \vdots &       & \vdots &		 & \vdots & 	  & \vdots \\
+ a_{n1} & \dots & a_{ni} & \dots & a_{nj} & \dots & a_{nm} \\
+\end{pmatrix}
+\cdot
+\stackon[1pt]{
+\begin{pmatrix}
+1& \hspace*{2ex}  & \vert &  \hspace*{3ex}  &\vert  &  \hspace*{3ex} &  \\
+& \ddots & \vert & & \vert &  \\
+-&-& 0 & \dots & 1  &- &-  \\
+& & \vert & \ddots & \vert  & & \\
+-&- & 1 & \dots & 0 & - &- \\ \vspace*{1ex}
+& & \vert & & \vert & \ddots & \\
+& & \vert  & & \vert & & 1
+\end{pmatrix}}
+{
+\begin{matrix}
+~ 1 & \dots  & \: i &  \dots  & \; j & \dots &  m
+\end{matrix}
+}
+\begin{matrix}
+  \vspace*{-3ex}  \\ 1 \\ \vdots  \\ i \\ \vdots  \\ j \\ \vdots \\ m
+\end{matrix}
+\;
+=
+\begin{pmatrix}
+ a_{11} & \dots & a_{1j} & \dots & a_{1i} & \dots & a_{1m} \\
+ a_{21} & \dots & a_{2j} & \dots & a_{2i} & \dots & a_{2m} \\
+ \vdots &       & \vdots &		 & \vdots & 	  & \vdots \\
+ a_{n1} & \dots & a_{nj} & \dots & a_{ni} & \dots & a_{nm} \\
+\end{pmatrix}
+$$
+\end{footnotesize}
+\pagebreak
+\\
+\begin{normalsize}
+2. Vynásobení sloupce nenulovým číslem $\alpha$ z \textit{T}.
+\end{normalsize}
+\\
+\\
+\begin{footnotesize}
+$$
+\begin{pmatrix}
+ a_{11} & \dots & a_{1i} & \dots & \dots &  a_{1m} \\
+ a_{21} & \dots & a_{2i} & \dots & \dots & a_{2m} \\
+ \vdots &       & \vdots &		 &       & \vdots \\
+ a_{n1} & \dots & a_{ni} & \dots & \dots & a_{nm} \\
+\end{pmatrix}
+\cdot
+\stackon[1pt]{
+\begin{pmatrix}
+1& \hspace*{2ex}  & \vert &  \hspace*{3ex}  &  &  \hspace*{3ex} &  \\
+& \ddots & \vert & &  &  \\
+-&-& \alpha & - & -  &- &-  \\
+& & \vert & \ddots &   & & \\
+& & \vert &  & \ddots &  & \\ \vspace*{1ex}
+& & \vert & &  & \ddots & \\ 
+& & \vert  & &  & & 1 
+\end{pmatrix}}
+{
+\begin{matrix}
+~ 1 & \dots \;  & \; i  & \; \dots  & \;  \dots &  \dots & m
+\end{matrix}
+}
+\begin{matrix}
+  \vspace*{-3ex}  \\ 1 \\ \vdots  \\ i \\ \vdots  \\ \vdots \\ \vdots \\ m
+\end{matrix}
+\;
+=
+\begin{pmatrix}
+ a_{11} & \dots & \alpha a_{1i} & \dots & \dots &  a_{1m} \\
+ a_{21} & \dots & \alpha a_{2i} & \dots & \dots & a_{2m} \\
+ \vdots &       & \vdots &		 &       & \vdots \\
+ a_{n1} & \dots & \alpha a_{ni} & \dots & \dots & a_{nm} \\
+\end{pmatrix}
+$$
+\thispagestyle{empty}
+\end{footnotesize}
+\\
+\\
+3. Přičtení $\alpha$-násobku \textit{j}-tého sloupce k \textit{i}-tému.
+\\
+\\
+\\
+\hspace*{-6ex}
+\begin{footnotesize}
+$
+\begin{pmatrix}
+ a_{11} & \dots & a_{1i} & \dots & a_{1j} & \dots & a_{1m} \\
+ a_{21} & \dots & a_{2i} & \dots & a_{2j} & \dots & a_{2m} \\
+ \vdots &       & \vdots &		 & \vdots & 	  & \vdots \\
+ a_{n1} & \dots & a_{ni} & \dots & a_{nj} & \dots & a_{nm} \\
+\end{pmatrix}
+\cdot
+\stackon[1pt]{
+\begin{pmatrix}
+1& \hspace*{2ex}  & \vert &  \hspace*{3ex}  &\vert  &  \hspace*{3ex} &  \\
+& \ddots & \vert & & \vert &  \\
+-&-& 1 &-& -  &- &-  \\
+& & \vert & \ddots & \vert  & & \\
+-&- & \alpha & - & 1 & - &- \\ \vspace*{1ex}
+& & \vert & & \vert & \ddots & \\
+& & \vert  & & \vert & & 1
+\end{pmatrix}}
+{
+\begin{matrix}
+~ 1 & \dots  & i & \; \dots  & \; j & \; \dots &  m
+\end{matrix}
+}
+\begin{matrix}
+  \vspace*{-3ex}  \\ 1 \\ \vdots  \\ i \\ \vdots  \\ j \\ \vdots \\ m
+\end{matrix}
+\;
+=
+\begin{pmatrix}
+ a_{11} & \dots & a_{1i} + \alpha a_{1j} & \dots & a_{1j} & \dots & a_{1m} \\
+ a_{21} & \dots & a_{2i} + \alpha a_{2j} & \dots & a_{2j} & \dots & a_{2m} \\
+ \vdots &       & \vdots              	 &		 & \vdots & 	  & \vdots \\
+ a_{n1} & \dots & a_{ni} + \alpha a_{nj} & \dots & a_{nj} & \dots & a_{nm} \\
+\end{pmatrix}
+$
+\end{footnotesize}
+\\
+Vlídný čtenář nahlédne, že podle pravidel maticového násobení všechny tři rovnosti platí. $\hfill \Box$ %posle na konec radku
+
+\begin{theorem}{\normalfont(Ekvivalentní sloupcové úpravy a násobení maticí).}\label{veta1}
+Nechť  $\mathbb{A} \in T^{n,m}$. Provedeme-li s $\mathbb{A}$ konečný počet ekvivalentních sloupcových úprav, je výsledná matice rovna matici $\mathbb{AM}$, kde je $\mathbb{M}$ čtvercová matice řádu \textbf{m}, která vznikla z jednotkové matice $\mathbb{I}$ stejnými ekvivalentními sloupcovými úpravami provedenými ve stejném pořadí.
+\end{theorem}
+
+\textit{Důkaz}. Jestliže v $\mathbb{A}$ provedeme \textit{k} ekvivalentních sloupcových úprav (ESÚ), potom je podle lemmatu~\ref{lma1} výsledná matice rovna:
+$$\mathbb{AM_\textit{1} M_\text{2} \dots M_\text{k},}$$
+\\
+kde $\mathbb{M_\textit{i}}$ je matice vyniklá z jednotkové \textit{i}-tou ESÚ.  Označme $\mathbb{M}=\mathbb{M_{\textit{1}} M_\text{2}  \dots M_\text{k}}$. Pak  \linebreak $\mathbb{M}=\mathbb{M_{\textit{1}} M_\text{2} \dots M_\text{k}I}$ a podle lemmatu \ref{lma1} vidíme, že $\mathbb{M}$ vznikla z $\mathbb{I}$ stejnými \textit{k} ESÚ provedenými ve stejném pořadí. $\hfill \Box$
+
+\begin{theorem}{\normalfont(Úplná Gaussova eliminace).}
+Nechť $\mathbb{M} \in T^{n,n}, \mathbb{A}$ je regulární matice a $\mathbb{B} \in T^{m,n}$. Pak $\mathbb{A}$ lze převést ekvivalentními sloupcovými úpravami na jednotkovou matici. Pokud převedeme rozšířenou matici $\left(\frac{\mathbb{A}}{\mathbb{B}} \right)$ ekvivalentními řádkovými úpravami do tvaru $\left(\frac{\mathbb{I}}{\mathbb{X}} \right)$, potom $\mathbb{X}=\mathbb{BA^{\text{\normalfont{-1}}}}$.
+\\
+
+	Symbolicky zapsáno:
+	$$\left(\frac{\mathbb{A}}{\mathbb{B}} \right) \sim \left(\frac{\mathbb{I}}{\mathbb{BA^{\text{\normalfont{-1}}}}} \right).$$ %\sim pro vlnovku
+\end{theorem}
+\thispagestyle{empty}
+\textit{Důkaz}. Po převedení $\mathbb{A}$ pomocí ESÚ do horního stupňovitého tvaru má matice na diagonále díky regularitě pouze nenulová čísla. Když poté každý sloupec vydělíme odpovídajícím číslem, dostaneme na diagonále jedničky. A nad ní již jednoduše vyrobíme nuly - nejprve v druhém sloupci odečtením odpovídajícího násobku prvního sloupce, poté ve třetím sloupci odečtením vhodného násobku prvního a druhého řádku atd.
+
+K důkazu druhé části věty si stačí uvědomit, že $\mathbb{I}$ vznikla ESÚ z $\mathbb{A}$ a že $\mathbb{X}$ vznikla z $\mathbb{B}$ stejnými úpravami provedenými ve stejném pořadí. Z věty \ref{veta1} plyne existence matice $\mathbb{M}$ takové, že $\mathbb{I}=\mathbb{AM}$ a $\mathbb{X}=\mathbb{BM}$. Z první rovnosti dostáváme $\mathbb{M}=\mathbb{A^{\text{\normalfont{-1}}}}$ a z druhé rovnosti pak $\mathbb{X}=\mathbb{BA^{\text{\normalfont{-1}}}}$ což jsme chtěli dokázat. $\hfill \Box$
+\\
+
+Slovo „úplná“ naznačuje, že na rozdíl od Gaussovy eliminace, kdy jsme matici pomocí ESÚ převedli do horního stupňovitého tvaru a zastavili se, v úplné Gaussově eliminaci z horního stupňovitého tvaru pokračujeme a vyrábíme nuly nad diagonálou, dokud nedostaneme jednotkovou matici.
+
+Úplnou Gaussovu eliminaci můžeme používat k řešení následujících úloh"
+
+\begin{enumerate}
+\item {Jsou dány matice $\mathbb{A}$ regulární a $\mathbb{B}$ vhodného rozměru. Najděte $\mathbb{BA^{\text{\normalfont{-1}}}}$.}
+\item Je dána regulární matice $\mathbb{A}$. Určete $ \mathbb{A^{\text{\normalfont{-1}}}}$. (Klademe $ \mathbb{B}$ rovno $ \mathbb{I}$.)
+\item Je dána regulární matice $\mathbb{A}$ a vektor $\vec{b}$ vhodného rozměru. Najděte $\mathbb{A^{\text{\normalfont{-1}}}}\vec{b}$, tj. řešte rovnici $\mathbb{A}\vec{x}=\vec{b}$. \\ Klademe $\mathbb{B}$ rovno $\vec{b}$ a A transponujeme a aplikujeme úplnou Gaussovu eliminaci:
+
+$$\left(\frac{\mathbb{A^{\textit{T}}}}{\vec{b}}\right) 
+\sim \left(\frac{\mathbb{I}}{\vec{b}\left(A^{\text{\normalfont{-1}}}\right)^{\textit{T}}}\right) 
+\sim  \left(\frac{\mathbb{I}}{\displaystyle{\left(\left(\vec{b}\left(A^{\text{\normalfont{-1}}}\right)^{\textit{T}}\right)^{\textit{T}}\right)^{\textit{T}}}}\right)
+\sim  \left(\frac{\mathbb{I}}{\displaystyle{\left(A^{\text{\normalfont{-1}}}\left(\vec{b}\right)^{\textit{T}}\right)^{\textit{T}}}}\right)  
+\sim  \left(\frac{\mathbb{I}}{\displaystyle{\left(A^{\text{\normalfont{-1}}}\vec{b}\right)^{\textit{T}}}}\right) 
+.$$
+Kde využíváme pravidla transponování součinu a faktu, že matice dvakrát transponovaná je matice původní. V posledním kroku využíváme, vektor transponovaný je ten stejný, je na nás jak ho zapíšeme dle toho z jaké strany ho používáme k násobení. Výsledkem toho postupu je matice transponovaná k matici k nám hledané a tak stačí ji jenom ještě jednou transponovat.
+\item Jsou dány matice $\mathbb{A}$ regulární a $\mathbb{X}$ vhodného rozměru. Spočtěte $\mathbb{A^{\text{\normalfont{-1}}}X}$.
+Zde aplikujeme úplnou Gaussovu eliminaci na transponované matice:
+$$\left(\frac{\mathbb{A^{\textit{T}}}}{\mathbb{X^{\textit{T}}}}\right)
+\sim \left(\frac{I}{\mathbb{X^{\textit{T}}}\left(\mathbb{A^{\textit{T}}}\right)^{\text{\normalfont{-1}}}}\right)
+\sim \left(\frac{I}{\left(\mathbb{A}^{\text{\normalfont{-1}}}\mathbb{X}\right)^{\textit{T}}}\right).$$
+Tudíž transponováním výsledné dolní matice získáme $\mathbb{A}^{\text{\normalfont{-1}}}\mathbb{X}$.
+\end{enumerate}
+\pagebreak
+\begin{expl}
+\thispagestyle{empty}
+\normalfont{Jsou dány matice
+$$
+\mathbb{A}= 
+\begin{pmatrix}
+0 & 0 & 1 \\
+1 & 0 & -1  \\
+-1 & 1& 0
+\end{pmatrix},
+\mathbb{B}=
+\begin{pmatrix}
+2 & 0  & 1\\
+0 & 0  &-1\\
+
+\end{pmatrix},
+\mathbb{X}=
+\begin{pmatrix}
+2 & 1 \\
+0 & 1 \\
+-1 & 1
+\end{pmatrix}
+$$}
+\begin{itemize}
+\item $\mathbb{B}\mathbb{A}^{\text{\normalfont{-1}}}$:
+\vspace*{5ex}
+\[\left(\frac{\mathbb{A}}{\mathbb{B}} \right)
+=
+\begin{pmatrix}
+0 & 0 & 1 \\
+1 & 0& -1 \\
+-1 & 1 & 0 \\ \hline
+2 & 0 & 1 \\
+0 & 0 & -1  
+\end{pmatrix}
+\sim 
+\begin{pmatrix}
+1 & 0 & 0 \\
+-1 & 1 & 0 \\
+0 & -1 & 1 \\\hline
+1 & 2 & 0\\
+-1 & 0 & 0
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+-1 & -1 & 1\\ \hline
+3 & 2 & 0 \\
+-1 & 0 & 0
+\end{pmatrix}
+\sim 
+$$
+$$
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 &1 & 0 \\
+0 & 0 & 1 \\ \hline
+3 & 2 & 0 \\
+-1& 0 & 0 \\
+\end{pmatrix}, \text{ tedy} \quad \mathbb{B}\mathbb{A}^{\text{\normalfont{-1}}} = 
+\begin{pmatrix}
+3 & 2 & 0 \\
+-1& 0 & 0 \\
+\end{pmatrix}
+\]
+\item $\mathbb{A}^{\text{\normalfont{-1}}}\mathbb{X}$
+$$\left(\frac{\mathbb{A^{\textit{T}}}}{\mathbb{X^{\textit{T}}}}\right)
+=
+\begin{pmatrix}
+0 & 1 & -1 \\
+0 & 0 & 1 \\
+1 & -1 & 0 \\ \hline
+2 & 0 & -1 \\
+1 & 1 & 1
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+1 & -1 & 0 \\
+0 & 1 & 0 \\
+-1 & 0 & 1 \\ \hline
+0 & -1 & 2 \\
+1 & 1 & 1
+\end{pmatrix}
+\sim \begin{pmatrix}
+1 & -1 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1 \\ \hline
+2 & -1 & 2 \\
+2 & 1 & 1
+\end{pmatrix}
+\sim
+$$
+$$
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1 \\ \hline
+2 & 1 & 2 \\
+2 & 3 & 1  
+\end{pmatrix},\text{ tudíž} \quad \mathbb{A}^{\text{\normalfont{-1}}}\mathbb{X} = 
+\begin{pmatrix}
+2 & 2 \\
+1 & 3 \\
+2 & 1 
+\end{pmatrix}
+$$
+\item $\mathbb{A}^{-1}$
+
+$$
+\left(\frac{\mathbb{A}}{\mathbb{I}} \right)=
+\begin{pmatrix}
+0 & 0 & 1 \\
+1 & 0 & -1 \\
+-1 & 1 & 0 \\ \hline
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1 
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+1 & 0 & 0 \\
+-1 & 1 & 0 \\
+0 & -1 & 1 \\ \hline
+0 & 1 & 0 \\
+0 & 0 & 1 \\
+1 & 0 & 0
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+-1 & 1 & 1 \\ \hline
+1 & 1 & 0 \\
+0 & 0 & 1 \\
+1 & 0 & 0
+\end{pmatrix}
+\sim
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1 \\ \hline
+1 & 1 & 0 \\
+1 & 1 & 1 \\
+1 & 0 & 0
+\end{pmatrix}, \text{ proto } \mathbb{A}^{-1}=
+\begin{pmatrix}
+1 & 1 & 0 \\
+1 & 1 & 1 \\
+1 & 0 & 0
+\end{pmatrix}
+$$
+\end{itemize}
+\end{expl}
+\end{document}
